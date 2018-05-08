@@ -31,7 +31,7 @@ console.timeEnd("label")
 
 
 // 断言，有错误会抛出一个断言异常
-console.assert(1 + 1 === 3, 'error');
+// console.assert(1 + 1 === 3, 'error');
 
 /**
  *  process ：进程
