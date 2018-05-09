@@ -44,3 +44,8 @@
 
   ### 方法二：
   - 使用vscode 自带的调试功能，配置launch.json ，可以直接进行调试，（步骤不详细陈述）；
+
+
+  ## events 文件夹下，是node的events源码实现和案例。
+
+  ## module 文件夹下，是node的module 源码实现和案例。

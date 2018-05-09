@@ -40,7 +40,12 @@ Module.wrap = function (script) {
 Module._extentions["js"] = function (module) {
     let script = fs.readFileSync(module.filename);
     let fnStr = Module.wrap(script);
-    vm.runInThisContext(fnStr).call(module.exports, module.exports, req, module);//call第一个参数可以为null，undifined,{}????
+    vm.runInThisContext(fnStr).call(module.exports, module.exports, req, module);//call第一个参数可以为null，undifined,{}????  -----第三个参数req可以为null，会默认有有一个方法，即便传了其他方法也不会改变默认的？？？？？？
+}
+
+Module._extentions["json"]= function(module){
+    let script = fs.readFileSync(module.filename);
+    module.exports= JSON.parse(script);
 }
 
 // 模块加载方法
@@ -59,7 +64,7 @@ function req(filename) {
     let cacheModul = Module._cache[filename];//获取缓存对象的内容
     // 检查文件路径在缓存中是否存在，如果存在直接返回；
     if (cacheModul) {
-        return catchModul.exports;
+        return cacheModul.exports;
     }
     //没缓存，就创建模块,加载模块；
     let module = new Module(filename);
@@ -70,4 +75,4 @@ function req(filename) {
 }
 
 let result = req('./school');
-// console.log(result);
+console.log(result);

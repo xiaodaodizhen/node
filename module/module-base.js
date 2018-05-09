@@ -34,4 +34,4 @@ console.log(path.posix.delimiter);// linux 是冒号:
 let vm = require('vm');
 let a = 2;
 eval("console.log(a)"); // eval 依赖于环境（上下文）
-vm.runInThisContext("console.log(a)");// 只在本区域本，不联系上下文
+vm.runInThisContext("console.log(a)");// 只在本区域内，不联系上下文
