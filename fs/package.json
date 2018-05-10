@@ -1,0 +1,13 @@
+{
+  "name": "xg_one_publish",
+  "version": "1.0.0",
+  "description": "A packaged test for xg",
+  "main": "foo.js",
+  "scripts": {
+    "text": ""
+  },
+  "bin": {
+    "xg_one_publish": "bin/a.js"
+  },
+  "license": "ISC"
+}
