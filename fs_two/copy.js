@@ -1,6 +1,6 @@
 let fs = require('fs');
 let path = require('path');
-// 自定义copy 方法，但是过于站内存。
+// 自定义copy 方法，但是过于占内存。
 // function copy(source, target) {
 //   fs.readFile(path.join(__dirname, source), (err, data) => {
 //     if (err) return console.log("err:" + err);
