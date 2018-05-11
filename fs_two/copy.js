@@ -64,7 +64,7 @@ fs.open(path.join(__dirname, '1.txt'), 'r', 0o666, (err, fd) => {
 
 
 /**
- * copy 另一只实现
+ * copy 另一种实现
  * 
  */
 

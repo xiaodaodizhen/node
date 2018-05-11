@@ -105,7 +105,6 @@ function removePromise(dir) {
           Promise.all(files).then((data) => {
             fs.rmdir(dir, resolve());
           }, err => {
-
           });
         });
       } else {
