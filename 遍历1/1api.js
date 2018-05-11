@@ -95,28 +95,105 @@ function removeDir(dir) {
 //   }
 // });
 
-
-function removePromise(dir) {
-  return new Promise((resolve, reject) => {
-    fs.stat(dir, (err, stat) => {
-      if (stat.isDirectory()) {
-        fs.readdir(dir, (err, files) => {
-          files = files.map(file => removePromise(path.join(dir, file)));
-          Promise.all(files).then((data) => {
-            fs.rmdir(dir, resolve());
-          }, err => {
-          });
-        });
-      } else {
-        fs.unlink(dir, resolve());
-      }
-    });
+function rmdir(dir, callback) {
+  fs.readdir(dir, (err, files) => {
+    function next(index) {
+      if (index === files.length) return fs.rmdir(dir, callback);
+      let newPath = path.join(dir, files[index]);
+      fs.stat(newPath, (err, stat) => {
+        if (stat.isDirectory()) {
+          // 应该读的是b里面的第一个，而不是平级的另一个目录，等本目录读取完毕后，才进行平级目录的执行。
+          rmdir(newPath, () => next(index + 1));
+        } else {
+          // 删除文件后继续遍历
+          fs.unlink(newPath, next(index + 1));
+        }
+      });
+    }
+    next(0);
   });
 }
-removePromise("d").then((data) => {
-  console.log("删除成功");
-}, (err) => {
 
+rmdir('b', () => {
+  console.log("执行完毕");
 });
 
 
+
+// promise 的方式删除
+// function removePromise(dir) {
+//   return new Promise((resolve, reject) => {
+//     fs.stat(dir, (err, stat) => {
+//       if (stat.isDirectory()) {
+//         fs.readdir(dir, (err, files) => {
+//           files = files.map(file => removePromise(path.join(dir, file)));
+//           Promise.all(files).then((data) => {
+//             fs.rmdir(dir, resolve());
+//           }, err => {
+//           });
+//         });
+//       } else {
+//         fs.unlink(dir, resolve());
+//       }
+//     });
+//   });
+// }
+// removePromise("d").then((data) => {
+//   console.log("删除成功");
+// }, (err) => {
+
+// });
+
+
+
+
+/**
+ * 
+ * 横向删除,实质是同步广度遍历。
+ * 
+ * 
+ */
+function priWide(dir) {
+  let arrs = [dir];
+  let index = 0;
+  let current;
+  while (current = arrs[index++]) {
+    let stat = fs.statSync(current);
+    if (stat.isDirectory()) {
+      let files = fs.readdirSync(current);
+      arrs = [...arrs, ...files.map(file => path.join(current, file))];
+    }
+  }
+  for (let i = arrs.length; i >= 0; i++) {
+    let stat = fs.statSync(arrs[i]);
+    if (stat.isDirectory()) {
+      fs.rmdirSync(arrs[i]);
+    } else {
+      fs.unlinkSync(arrs[i]);
+    }
+
+  }
+}
+
+
+/**
+ * fs.watchFile(当前的状态,上一次的状态)  
+ * 监控文件有没有改动
+ * 
+ */
+fs.watchFile('4.txt', (current, prev) => {
+  if (Date.parse(current.ctime == 0)) {
+    console.log('不存在');
+  } else if (Date.parse(prev.ctime === 0)) {
+    console.log('创建');
+  } else {
+    console.log('修改');
+  }
+});
+
+/**
+ * fs.rename('a','b') a文件重命名为b
+ * 
+ * fs.truncate('1.txt',4) 截断 
+ * 
+ */
