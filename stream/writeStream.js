@@ -90,7 +90,7 @@ class WriterStream extends EventEmitter {
       this._write(chunk, encoding, () => this.clearBuffer());
       this.writing = true;
     }
-    console.log(this.buffers);// --------------------多次执行结果显示，缓存区buffer 只是有两条数据，没有到达highWaterMark
+    console.log(this.buffers);// --------------------？？？？？？？？？？多次执行结果显示，缓存区buffer 只是有两条数据，没有到达highWaterMark
     return ret;
   }
 

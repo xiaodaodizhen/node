@@ -28,25 +28,25 @@ function makeP(dir) {
  * 备注：如果是异步代码，永远不能用for循环，for是同步代码。
  */
 
-function mkdirs(dir, cb) {
-  let paths = dir.split('/');
-  function next(index) {
-    if (index > paths.length) {
-      return cb();
-    }
-    let newPath = paths.slice(0, index).join('/');
-    fs.access(newPath, (err) => {// 判断文件是否可读，可读就说明已经存在，报错说明不存在，所以创建一个
-      if (err) {
-        fs.mkdir(newPath, (err) => {
-          next(index + 1); // 创建成功后，在创建下一个-------------？？？？？？  index++ 直接进入死循环，，++index  和index+1 缺没事
-        });
-      } else {
-        next(index + 1); // 如果本目录已经创建，直接创建下一个
-      }
-    });
-  }
-  next(1);
-}
+// function mkdirs(dir, cb) {
+//   let paths = dir.split('/');
+//   function next(index) {
+//     if (index > paths.length) {
+//       return cb();
+//     }
+//     let newPath = paths.slice(0, index).join('/');
+//     fs.access(newPath, (err) => {// 判断文件是否可读，可读就说明已经存在，报错说明不存在，所以创建一个
+//       if (err) {
+//         fs.mkdir(newPath, (err) => {
+//           next(index + 1); // 创建成功后，在创建下一个-------------？？？？？？  index++ 直接进入死循环，，++index  和index+1 缺没事
+//         });
+//       } else {
+//         next(index + 1); // 如果本目录已经创建，直接创建下一个
+//       }
+//     });
+//   }
+//   next(1);
+// }
 
 // mkdirs('d/r/t', () => {
 //   console.log("创建成功");
@@ -114,9 +114,9 @@ function rmdir(dir, callback) {
   });
 }
 
-rmdir('b', () => {
-  console.log("执行完毕");
-});
+// rmdir('b', () => {
+//   console.log("执行完毕");
+// });
 
 
 
@@ -181,15 +181,15 @@ function priWide(dir) {
  * 监控文件有没有改动
  * 
  */
-fs.watchFile('4.txt', (current, prev) => {
-  if (Date.parse(current.ctime == 0)) {
-    console.log('不存在');
-  } else if (Date.parse(prev.ctime === 0)) {
-    console.log('创建');
-  } else {
-    console.log('修改');
-  }
-});
+// fs.watchFile('4.txt', (current, prev) => {
+//   if (Date.parse(current.ctime == 0)) {
+//     console.log('不存在');
+//   } else if (Date.parse(prev.ctime === 0)) {
+//     console.log('创建');
+//   } else {
+//     console.log('修改');
+//   }
+// });
 
 /**
  * fs.rename('a','b') a文件重命名为b
@@ -197,3 +197,57 @@ fs.watchFile('4.txt', (current, prev) => {
  * fs.truncate('1.txt',4) 截断 
  * 
  */
+
+
+
+/***
+ * 深度删除
+ * 
+ */
+
+function wide(dir, callback) {
+  let arr = [dir];
+  let index = 0;
+
+  function rmdir() {
+    function next() {
+      if (!index) {
+        return callback();
+      }
+      let current = arr[--index];
+      fs.stat(current, (err, stat) => {
+        if (stat.isDirectory()) {
+          fs.rmdir(current, next);
+        } else {
+          fs.unlink(current, next);
+        }
+      });
+    }
+    next();
+  }
+
+  // 将所有级别的目录都拼接到一个一维数组中
+  function next() {
+    if (index === arr.length) {
+      return rmdir();
+    }
+    let current = arr[index++];
+    fs.stat(current, (err, stat) => {
+      if (stat.isDirectory()) {
+        fs.readdir(current, (err, files) => {
+          arr = [...arr, ...files.map((file) => {
+            return path.join(current, file);
+          })];
+          next();
+        });
+      } else {
+        next();
+      }
+    });
+  }
+  next();
+}
+wide('zz', () => {
+  console.log("删除成功");
+})
+

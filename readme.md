@@ -3,8 +3,11 @@
 - ui线程会把更改放到队列中， 当js线程空闲下来后，ui线程在继续渲染。
 
 ## webworker 多线程*
-- webworker 和js 主线程是不平级的，主线程可以控制webworker,webworker不能操作dom， 不能获取document，window。
+- webworker(有一些计算功能) 和js 主线程是不平级的，主线程可以控制webworker,webworker不能操作dom， 不能获取document，window。
+- js 只能是单线程的，不能两个线程同时操作一个dom
 
+## 多线程
+- 有的时候可能浪费资源，切换时间片，
 ## 浏览器中的event loop (事件环)- 堆、栈、队列
 
 ## 栈（stack）和队列(queue)
@@ -49,3 +52,14 @@
   ## events 文件夹下，是node的events源码实现和案例。
 
   ## module 文件夹下，是node的module 源码实现和案例。
+
+
+  ## npm install http-server -g  可以在某个文件夹下起服务，执行http-server
+
+  ## 宏任务   微任务 ----执行时机是不一样的，共同点-都是异步
+  - 常见的宏任务，
+    - 浏览器中：setTimeout  setTmmediate(只兼容ie)
+    - vue 中 ： MessageChannel
+  - 常见的微任务 ：
+    - promise的then   
+    - MutationOBserver(有兼容问题)的nextTick
