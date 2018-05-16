@@ -8,21 +8,21 @@
  * console 是在global上的属性
  * 
  */
-// 标准输出  1
+// 标准输出  1  ，与process.stdout功能一样
 console.log("log");
 console.info("info");
-// 错误输出  2
+// 错误输出  2 ,与process.stderr功能一样
 console.error("err");
 console.warn("warn");
 
 
-// 将错误输出，也输出到1.log文件中命令行为  node node1.js > 1.log 2>&1    (2代表错误输出，1代表标准输出)
+// *****将错误输出，也输出到1.log文件中命令行为  node node1.js > 1.log 2>&1    (2代表错误输出，1代表标准输出)
 
 // 默认属性默认是隐藏属性--配置显示隐藏为true
 console.dir(Array.prototype, { showHidden: true });
 
 
-// time 和timeEnd中的内容是一对，名字相同，相同时才能打印两端时间的间隔。
+//**** time 和timeEnd中的内容是一对，名字相同，相同时才能打印两端时间的间隔（一般用于算服务器的请求时间）。
 console.time("label")
 for (var i = 0; i < 12; i++) {
 
@@ -30,30 +30,60 @@ for (var i = 0; i < 12; i++) {
 console.timeEnd("label")
 
 
-// 断言，有错误会抛出一个断言异常
-// console.assert(1 + 1 === 3, 'error');
+// 断言，有错误会抛出一个断言异常(node中自带了一个模块，这个模块就叫做assert())
+// console.assert((1 + 1) === 3, 'error');
 
 /**
  *  process ：进程
- *    argv 后续执行的时候坑嗯会传递参数，http-server --port 3000
+ *    argv 后续执行的时候传递的参数，http-server --port 3000 （本命令未实验出来） / node 文件名 --port 3000
  *    pid  进程id，端口占用情况，任务管理器 1sof-i:8000 -9 id号
  *    chdir change directory 工作目录
  *    cwd current working directory 当前工作目录
- *    nextTick 微任务
- *    stdout：标准输出 stderr：错误输出 stdin
- * Buffer 存储文件内容，二进制
- * setImmediate 立即执行
+ *    nextTick 微任务，和promise中的then比nextTick执行快
+ *    stdout：标准输出 stderr：错误输出 stdin：标准输入
+ *    env:环境变量（一般用于判断是开发环境还是线上环境）
+ * Buffer 存储文件内容，二进制缓存
+ * setImmediate 立即执行（宏任务）
  * setInteval
  * setTimeout
  * vscode 处理路径 永远都是最底下的目录
  * 
+ * exit ：退出进程
+ * kill:杀死进程
+ * 
  */
 
+// 2) 执行时的参数（args是个库）  在命令行中执行打印有效果
+console.log(process.argv);
+let args = {};
+process.argv.slice(2).forEach((item, index) => {
+  if (item.includes('--')) {
+    args[item] = process.argv.slice(2)[index + 1];
+  }
+});
+console.log(args);
+
+
+// 3) 环境变量 （判断是开发环境还是线上环境）===windows 设置环境变量用set
+
+
+let url;
+if (process.env.NODE_ENV == 'development') {
+  url = 'http://localhost:3000/api';
+} else {
+  url = "http://zfpx.cn";
+}
+console.log(process.env.NODE_ENV, url);
+
+
+// 4) 目录的更改问题
 console.log(1 + process.cwd());
 process.chdir('..');//更改到上级目录
 console.log(__dirname);// 不是gobal 属性，当前文件所在的文件夹，不会更改。
 console.log(1 + process.cwd());
 
+
+// 5) 输入输出
 // 标准输出(两种方式) 序号1
 process.stdout.write("1");
 console.log("1");
@@ -61,6 +91,13 @@ console.log("1");
 // 错误输出（两种方式） 序号2
 process.stderr.write("2");
 console.error("2");
+
+// 标准输入
+process.stdin.on('data', (data) => {
+  process.stdout.write(data);
+});
+
+
 
 //微任务 then(浏览器中) nextTick(node中)
 
@@ -96,69 +133,69 @@ setTimeout(function () {
 });
 
 //--------------------------nextTIck 和then 都是在 阶段转化时才会调用，每次阶段转行都会执行‘微任务’，如果‘微任务’为空略过。
-process.nextTick(function(){
+process.nextTick(function () {
   console.log("nextTick");
 });
 
-setImmediate(function(){
+setImmediate(function () {
   console.log("immediate");
 });
 
-//--------------------------setTimeout  setImmediate 执行先后取决与node 的执行时间，先后不定
-setTimeout(function() {
+//--------------------------setTimeout  setImmediate 执行完毕先后取决与node 的启动执行时间，先后不定；
+setTimeout(() => {
   console.log('timeout');
 });
-setImmediate(function() {
+setImmediate(() => {
   console.log('immediate');
 });
 
 
 // i\o ：文件操作，属于宏任务
-// i\o 操作完成后，会进入check阶段，所以setImmiediate会优先于timeout执行；
+//poll的 i\o 操作完成后，会进入check阶段，所以setImmiediate会优先于timeout执行；
 let fs = require('fs');
-fs.readFile('1.log',function() {
+fs.readFile('1.log', function () {
   console.log('fs');
-  setTimeout(function() {
+  setTimeout(function () {
     console.log('timeout');
   });
-  setImmediate(function(){
+  setImmediate(function () {
     console.log('mmiediate');
   });
 });
 
 //nextTIck 会比then先执行
-Promise.resolve().then(function() {
+Promise.resolve().then(function () {
   console.log('then');
 });
-process.nextTick(function(){
+process.nextTick(function () {
   console.log('nextTick');
 });
 
 
 //--------------------------------------------实例：
-setImmediate(function(){
+setImmediate(function () {
   console.log(1);
-  process.nextTick(function(){
+  process.nextTick(function () {
     console.log(4);
   });
 });
 
-process.nextTick(function(){
+process.nextTick(function () {
   console.log(2);
-  setImmediate(function(){
+  setImmediate(function () {
     console.log(3);
   });
 });
 
 //--------------------实例:nextTick用法---拒绝使用nextTick写递归
-function Fn(){
+function Fn() {
   this.arrs;//3、
-  process.nextTick(()=>{//5、
+  process.nextTick(() => {//5、
     this.arrs();
   });
 }
-Fn.prototype.then=function(){//4、
-  this.arrs = function(){
+Fn.prototype.then = function () {//4、
+  this.arrs = function () {
     console.log(1);
   }
 }
