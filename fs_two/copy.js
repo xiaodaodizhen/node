@@ -110,6 +110,6 @@ copy('1.txt', '2.txt');
  * readFile():读取文件的全部内容
  * writeFile() :将内容全部写入文件
  * fs.read(fd, buffer, offset, length, position, callback):从fd指定的文件中读取数据到buffer(缓存区)
- *fs.write(fd, buffer[, offset[, length[, position]]], callback):将buffer中的内容写入到fd指定的文件中去
+ * fs.write(fd, buffer[, offset[, length[, position]]], callback):将buffer中的内容写入到fd指定的文件中去
  * 
  */

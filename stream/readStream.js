@@ -57,4 +57,4 @@ class ReadStream extends EventEmitter {
         });
     }
 }
-// module.exports = ReadStream;
+module.exports = ReadStream;

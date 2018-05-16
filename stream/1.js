@@ -10,7 +10,7 @@ let fs = require('fs');
 let path = require('path');
 // 返回的是一个可读流的一个对象
 // let rs = fs.createReadStream(path.join(__dirname, '1.txt'), 
-let rs = fs.ReadStream(path.join(__dirname, '1.txt'), 
+let rs =  new ReadStream(path.join(__dirname, '1.txt'), {}
     // {
     //     flags: 'r',// 文件的操作是读取操作
     //     encoding: 'utf8',//默认是null，null代表的是buffer
@@ -20,7 +20,7 @@ let rs = fs.ReadStream(path.join(__dirname, '1.txt'),
     //     highWaterMark: 3,//每次最多读取多少 3b，默认是64k
     // }
 );
-rs.setEncoding("utf8");//与上面配置的enconding 属性一样的功能
+// rs.setEncoding("utf8");//与上面配置的enconding 属性一样的功能
 // 默认情况下，不会将文件中得内容输出，内部会先创建一个buffer先读取3b，他的默认状态是“非流动”/“暂停模式”
 //流动模式会疯狂的出发data事件，直到内容读取完毕。
 rs.on('open', () => {
