@@ -18,6 +18,16 @@ function list(socket) {
     socket.write(str + arr + '\r\n');
 
 }
+//私聊  根据用户名取到对应的socket
+function private(nickname, content) {
+    let user;
+    Object.keys(clients).forEach((key) => {
+        if (clients[key].nickname == nickname) {
+            user = clients[key].socket;
+        }
+        user.write(content + '\r\n');
+    });
+}
 let server = net.createServer((socket) => {
     let key = socket.remoteAddress + socket.remotePort;//唯一的随机端口号
     clients[key] = { nickname: '匿名', socket };
@@ -39,8 +49,8 @@ let server = net.createServer((socket) => {
             case 'l':
                 list(socket);
                 break;
-            case 's':
-
+            case 's':// s:lisi:nihaoma
+                private( chars[1], chars[2]);
                 break;
 
             default:
