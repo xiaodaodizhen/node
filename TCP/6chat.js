@@ -2,7 +2,7 @@
 // 通过关键命令改名字  r:zhangsan
 // 支持显示在线的用户列表 l:
 // 广播的功能  b:xxx
-// 私聊的功能  s:lisi
+// 私聊的功能  s:lisi:neirong
 let net = require('net');
 let clients = {};
 // 改名字
@@ -18,6 +18,26 @@ function list(socket) {
     socket.write(str + arr + '\r\n');
 
 }
+
+// 私聊
+function private(keyUser, nickname, content) {
+    let user;
+    Object.keys(clients).forEach((key) => {
+        if (clients[key].nickname == nickname) {
+            user = clients[key].socket;
+        }
+    });
+    user.write(keyUser + ":" + content + '\r\n');
+}
+// 广播
+function broadcast(nickname, chunk) {
+    Object.keys(clients).forEach(key => {
+        if (clients[key].nickname != nickname) {
+            clients[key].socket.write(`${nickname}:${chunk}\r\n`);
+        }
+    });
+}
+
 let server = net.createServer((socket) => {
     let key = socket.remoteAddress + socket.remotePort;//唯一的随机端口号
     clients[key] = { nickname: '匿名', socket };
@@ -34,13 +54,13 @@ let server = net.createServer((socket) => {
                 rename(key, chars[1]);
                 break;
             case 'b':
-
+                broadcast(clients[key].nickname, chars[1])
                 break;
             case 'l':
                 list(socket);
                 break;
             case 's':
-
+                private(clients[key].nickname, chars[1], chars[2]);
                 break;
 
             default:
