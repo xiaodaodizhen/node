@@ -31,9 +31,9 @@ let path = require('path');
  * fs.open() 打开文件，先要打开文件，才能对文件进行操作
  * fd :file descriptor 文件描述符，他代表对当前文件的描述---对应的值是3
  * 
- * 
+ * process.stdin.write() :标准输入 --0
  * process.stdout.write() :标准输出--1
- * process.stdout.write() :错误输出--2
+ * process.stderr.write() :错误输出--2
  * 
  */
 let buffer = Buffer.alloc(3);
@@ -45,11 +45,11 @@ fs.open(path.join(__dirname, '1.txt'), 'r', 0o666, (err, fd) => {
    * postion  代表的是文件的读取位置，默认可以写null 代表当前从0开始
    * length 的长度不能大于buffer的长度
    * 
-   * bytesRead 读到的个数
+   * bytesRead 实际读到的个数
    */
 
   fs.read(fd, buffer, 0, 3, 0, (err, bytesRead) => {
-    console.log(err, bytesRead);
+    console.log(err, bytesRead,buffer);
   });
 })
 
@@ -64,20 +64,23 @@ fs.open(path.join(__dirname, '1.txt'), 'r', 0o666, (err, fd) => {
 
 
 /**
- * copy 另一种实现
+ * copy 另一种实现：好处，节约内存
  * 
  */
 
 function copy(source, target) {
   let size = 3;
-  let buffer = Buffer.alloc(3);
+  let buffer = Buffer.alloc(size);
+  let index = 0;
   fs.open(path.join(__dirname, source), 'r', (err, rfd) => {
     fs.open(path.join(__dirname, target), 'w', (err, wfd) => {
       function next() {
-        fs.read(rfd, buffer, 0, size, null, (err, bytesRead) => {
+        fs.read(rfd, buffer, 0, size, index, (err, bytesRead) => {
+
           if (bytesRead > 0) {// 读取完毕，没有读到就停止
-            fs.write(wfd, buffer, 0, bytesRead, null, (err, bytesWriten) => {
+            fs.write(wfd, buffer, 0, bytesRead, index, (err, bytesWriten) => {
               // 当write 方法出发了回调函数的时，并不是真正的文件被成功写入，而是先把内容写入到缓存区。
+              index += bytesRead;
               next();
             });
           } else {
@@ -101,7 +104,7 @@ function copy(source, target) {
   });
 }
 
-copy('1.txt', '2.txt');
+// copy('1.txt', '2.txt');
 
 
 // read()  

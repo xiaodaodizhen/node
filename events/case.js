@@ -28,4 +28,4 @@ girl.prependListener('中奖', function () {
 });
 console.log(girl.eventName());
 girl.removeListener('中奖', buyCar);
-girl.emit("中奖", '33');
+girl.emit("中奖", '33'); // emit 的参数，除了第一个，其他的都是传递给 监听事件回调函数的参数
