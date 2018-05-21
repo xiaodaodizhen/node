@@ -23,8 +23,7 @@ let server = http.createServer((req, res) => {
     if (!err) {
       if (refer) { // 图片在其他站点中被使用了
         let referHostName = getHostName(refer);
-        console.log(referHostName + "dddd");
-        let host = req.headers['host'].splice(':')[0]; // locahost:8080  区的是localhost
+        let host = req.headers['host'].split(':')[0]; // locahost:8080  区的是localhost
         if (referHostName != host) {
           // 防盗链
           fs.createReadStream(path.join(__dirname, 'public', './2.jpg')).pipe(res);
