@@ -3,7 +3,8 @@ let fs = require('fs');
 let vm = require('vm');
 function Module(filename) {//构造函数
     this.filename = filename;
-    this.exports = {};
+    this.exports = {};// 每个模块都会有这样一个属性
+    this.loaded = false;// 这个模块默认没加载完
 }
 // 文件后缀名（还可以在本数组中追加方法）
 Module._extentions = ['.js', '.json', '.node'];
@@ -12,7 +13,11 @@ Module._cache = {};//缓存，{key（绝对路径）: con（文件内容）}
 // 通过文件名，解析为绝对路径。
 Module._resolvePathname = function (filename) {
     let p = path.resolve(__dirname, filename);
+<<<<<<< HEAD
     if (!path.extname(p)) { // extname 获取文件扩展名，如果没有就添加扩展名
+=======
+    if (!path.extname(p)) { // 检查是否带有后缀名，没有就加上
+>>>>>>> ee231a82ac3d295c8bae6eeabefcd2e5f69df1be
         for (let i = 0; i < Module._extentions.length; i++) {
             const e = Module._extentions[i];
             let newPath = p + e;
@@ -38,20 +43,24 @@ Module.wrap = function (script) {
 
 // 在Module._extentions数组中增加名字为js的function；
 Module._extentions["js"] = function (module) {
-    let script = fs.readFileSync(module.filename);
+    let script = fs.readFileSync(module.filename, 'utf8');
     let fnStr = Module.wrap(script);
     vm.runInThisContext(fnStr).call(module.exports, module.exports, req, module);//call第一个参数可以为null，undifined,{}????  -----第三个参数req可以为null，会默认有有一个方法，即便传了其他方法也不会改变默认的？？？？？？
 }
 
 Module._extentions["json"] = function (module) {
+<<<<<<< HEAD
     let script = fs.readFileSync(module.filename);
+=======
+    let script = fs.readFileSync(module.filename, "utf8");
+>>>>>>> ee231a82ac3d295c8bae6eeabefcd2e5f69df1be
     module.exports = JSON.parse(script);
 }
 
 // 模块加载方法
 Module.prototype.load = function (filename) {
     let ext = path.extname(filename).slice(1);// .js .json
-    Module._extentions[ext](this);
+    Module._extentions[ext](this);//this 代表当前模块
 }
 
 /**
