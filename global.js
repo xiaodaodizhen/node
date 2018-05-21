@@ -64,7 +64,7 @@ process.argv.slice(2).forEach((item, index) => {
 console.log(args);
 
 
-// 3) 环境变量 （判断是开发环境还是线上环境）===windows 设置环境变量用set
+// 3) 环境变量 （判断是开发环境还是线上环境）===windows 设置环境变量用（set NODE_ENV=development    \ set NODE_ENV=product  不能有空格，有空格不能成功实现设置）
 
 
 let url;
@@ -81,7 +81,6 @@ console.log(1 + process.cwd());
 process.chdir('..');//更改到上级目录
 console.log(__dirname);// 不是gobal 属性，当前文件所在的文件夹，不会更改。
 console.log(1 + process.cwd());
-
 
 // 5) 输入输出
 // 标准输出(两种方式) 序号1

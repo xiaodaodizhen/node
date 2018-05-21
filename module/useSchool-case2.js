@@ -12,7 +12,7 @@ Module._cache = {};//缓存，{key（绝对路径）: con（文件内容）}
 // 通过文件名，解析为绝对路径。
 Module._resolvePathname = function (filename) {
     let p = path.resolve(__dirname, filename);
-    if (!path.extname(p)) {
+    if (!path.extname(p)) { // extname 获取文件扩展名，如果没有就添加扩展名
         for (let i = 0; i < Module._extentions.length; i++) {
             const e = Module._extentions[i];
             let newPath = p + e;
@@ -43,9 +43,9 @@ Module._extentions["js"] = function (module) {
     vm.runInThisContext(fnStr).call(module.exports, module.exports, req, module);//call第一个参数可以为null，undifined,{}????  -----第三个参数req可以为null，会默认有有一个方法，即便传了其他方法也不会改变默认的？？？？？？
 }
 
-Module._extentions["json"]= function(module){
+Module._extentions["json"] = function (module) {
     let script = fs.readFileSync(module.filename);
-    module.exports= JSON.parse(script);
+    module.exports = JSON.parse(script);
 }
 
 // 模块加载方法
