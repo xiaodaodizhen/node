@@ -1,0 +1,23 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "- js线程  ui线程   这两个线程是互斥的，目的是为了保证不产生冲突。\r - ui线程会把更改放到队列中， 当js线程空闲下来后，ui线程在继续渲染。",
+  "main": "eventLoop.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaodaodizhen/node.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xiaodaodizhen/node/issues"
+  },
+  "homepage": "https://github.com/xiaodaodizhen/node#readme",
+  "dependencies": {
+    "mime": "^2.3.1"
+  }
+}

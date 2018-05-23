@@ -121,28 +121,28 @@ function rmdir(dir, callback) {
 
 
 // promise 的方式删除
-// function removePromise(dir) {
-//   return new Promise((resolve, reject) => {
-//     fs.stat(dir, (err, stat) => {
-//       if (stat.isDirectory()) {
-//         fs.readdir(dir, (err, files) => {
-//           files = files.map(file => removePromise(path.join(dir, file)));
-//           Promise.all(files).then((data) => {
-//             fs.rmdir(dir, resolve());
-//           }, err => {
-//           });
-//         });
-//       } else {
-//         fs.unlink(dir, resolve());
-//       }
-//     });
-//   });
-// }
-// removePromise("d").then((data) => {
-//   console.log("删除成功");
-// }, (err) => {
+function removePromise(dir) {
+  return new Promise((resolve, reject) => {
+    fs.stat(dir, (err, stat) => {
+      if (stat.isDirectory()) {
+        fs.readdir(dir, (err, files) => {
+          files = files.map(file => removePromise(path.join(dir, file)));
+          Promise.all(files).then((data) => {
+            fs.rmdir(dir, resolve());
+          }, err => {
+          });
+        });
+      } else {
+        fs.unlink(dir, resolve());
+      }
+    });
+  });
+}
+removePromise('z').then((data) => {  // 默认查找的是跟目录，可以试试绝对路径的
+  console.log("删除成功yibu");
+}, (err) => {
 
-// });
+});
 
 
 
@@ -247,7 +247,7 @@ function wide(dir, callback) {
   }
   next();
 }
-wide('zz', () => {
-  console.log("删除成功");
-})
+// wide('zz', () => {
+//   console.log("删除成功");
+// })
 
