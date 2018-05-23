@@ -41,7 +41,7 @@ server.listen(port, 'localhost', () => {
   console.log(port);
 });
 
-// 只有嗲用colse方法才能触发，
+// 只有调用colse方法才能触发，
 server.on('close', () => {
   console.log('服务端关闭');
 });
