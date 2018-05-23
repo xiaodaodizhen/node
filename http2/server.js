@@ -14,7 +14,7 @@ let stat = promisify(fs.stat);// 将fs的stat方法转换成promise对象格式
 
 let server = http.createServer(async (req, res) => {
   // 转换con.txt的文件路径
-  let p = path.join(__dirname, "con.txt");
+  let p = path.join(__dirname, "cons.txt");
   //  获取文件p的基本信息
   let statObj = await stat(p);
   let start = 0;
