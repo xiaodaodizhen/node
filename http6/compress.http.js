@@ -20,4 +20,4 @@ let server = http.createServer((req, res) => {
     }
   }
   res.setHeader({'Content-type':'application/json; charset=UTF-8'});
-});
+}).listen(3000);
