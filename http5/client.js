@@ -1,6 +1,6 @@
 let http = require('http');
 
-for (var i = 1; i < 5000; i++) {
+for (var i = 1; i < 10; i++) {
   http.get({
     hostname: 'localhost',
     port: 3000,
