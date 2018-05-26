@@ -9,15 +9,15 @@ let server = http.createServer((req, res) => {
   if (header) {
     if (header.match(/\bgzip\b/)) {
       let gzip = zlib.createGzip();
-      res.setHeader({ 'Content-Encoding': 'gzip' });
+      res.setHeader('Content-Encoding', 'gzip');
       fs.createReadStream(p).pipe(gzip).pipe(res);
     } else if (header.match(/\bdeflate\b/)) {
       let deflate = zlib.createDeflate();
-      res.setHeader({ 'Content-Encoding': 'deflate' });
+      res.setHeader('Content-Encoding', 'deflate');
       fs.createReadStream(p).pipe(deflate).pipe(res);
     } else {
       fs.createReadStream(p).pipe(res);
     }
   }
-  res.setHeader({'Content-type':'application/json; charset=UTF-8'});
+  res.setHeader('Content-type', 'application/json; charset=UTF-8');
 }).listen(3000);

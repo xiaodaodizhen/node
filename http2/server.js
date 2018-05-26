@@ -21,14 +21,14 @@ let server = http.createServer(async (req, res) => {
   let end = statObj.size - 1;// 代表的是读取流的结束为止，开始和结束是包前又包后的（例如 {0,3}这是读取4个，因为是从0 1 2 3 计算的）
   let total = end;
   let range = req.headers['range'];//获取客户端发送的Range:bytes=0-10； 服务端获取请求头都必须小写（客户端大写）
- 
+
   if (range) {
     // 告诉他支持范围请求
     res.setHeader('Accept-Ranges', 'bytes');//返回客户端的响应头信息，区分大小写
     // 匹配range内容  Range:bytes=0-10 中的开始和结束
     let result = range.match(/bytes=(\d*)-(\d*)/);
-    start = parseInt(result[1] ? result[1] : start);
-    end = parseInt(result[2] ? result[2] : end);
+    start = parseInt(result[1] ? parseInt(result[1]) : start);
+    end = parseInt(result[2] ? parseInt(result[2]) : end);
     // 返回给客户端的响应头，获取成功并获取多少和总大小
     res.setHeader('Content-Range', `${start}-${end}/${total}`);
   }
