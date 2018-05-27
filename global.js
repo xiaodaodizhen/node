@@ -190,6 +190,7 @@ process.nextTick(function () {
 function Fn() {
   this.arrs;//3、
   process.nextTick(() => {//5、
+    console.log(2);
     this.arrs();
   });
 }

@@ -12,6 +12,7 @@ function broadcast(nickname, chunk) {
 let server = net.createServer((socket) => {
 
     server.maxConnections = 3; // 最多链接个数
+    // 获取链接个数
     server.getConnections((err, count) => {
         socket.write(`欢迎来到聊天室，当前用户数量${count}个，请输入用户名\r\n`);
     });

@@ -58,7 +58,7 @@
 
   ## 宏任务   微任务 ----执行时机是不一样的，共同点-都是异步
   - 常见的宏任务，
-    - 浏览器中：setTimeout  setTmmediate(只兼容ie)
+    - 浏览器中：setTimeout setInterval  setTmmediate(只兼容ie)
     - vue 中 ： MessageChannel
   - 常见的微任务 ：
     - promise的then   

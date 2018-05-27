@@ -16,8 +16,8 @@ let debug = require('debug')('static:app');
 // debug('app');
 let tmpl = fs.readFileSync(path.join(__dirname, '../public/tmpl.ejs'), 'utf8');
 class Server {
-  constructor() {
-    this.config = config;
+  constructor(args) {
+    this.config = { ...config, ...args };// 将bin/www.js 的文件配置与src/config.js 属性合并，如果有重复属性，会以args里的为准（此处用到了对象解构知识）
     this.tmpl = tmpl;
   }
   handleRequest() {
@@ -80,10 +80,10 @@ class Server {
   //压缩
   compress(req, res, p, statObj) {
     let lib = req.headers['accept-encoding'];
-    if (lib.match(/\bgzip\b/)) {
+    if (lib && lib.match(/\bgzip\b/)) {
       // res.setHeader('Content-Encoding', 'gzip');
       return zlib.createGzip();
-    } else if (lib.match(/\bdeflate\b/)) {
+    } else if (lib && lib.match(/\bdeflate\b/)) {
       // res.setHeader('Content-Encoding', 'deflate');
       return zlib.createDeflate();
     } else {
@@ -101,6 +101,8 @@ class Server {
       let [, s, e] = range.match(/bytes=(\d*)-(\d*)/);
       start = s ? parseInt(s) : start;
       end = e ? parseInt(e) : end;
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Content-Range', `bytes${start}-${end}/${statObj.size}`);
     }
     return fs.createReadStream(p, { start, end: end - 1 })
   }
@@ -119,10 +121,6 @@ class Server {
     if (lib) {
       stream.pipe(lib).pipe(res);
     }
-
-
-
-
     stream.pipe(res);
   }
 
@@ -139,10 +137,11 @@ class Server {
     let { port, hostname } = this.config;
     let server = http.createServer(this.handleRequest());
     let url = `http://${hostname}:${chalk.green(port)}`;
-    // debug(url);
+    debug(url);
     server.listen(port, hostname);
   }
 }
-let server = new Server();
-server.start();
+// let server = new Server();
+// server.start();
 
+module.exports = Server;

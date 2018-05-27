@@ -14,14 +14,14 @@ class ReadStream extends EventEmitter {
 
     this.buffers = [];// 缓存区
     this.length = 0;// 缓存区的长度，往缓存区放入就回增加，就不用去单独获取this.buffers的长度，提高性能。
-    this.emittedReadable = false;// 是否触发  readable 事件在去读取
+    this.emittedReadable = false;// 是否触发  readable 事件在去读取--当缓存去长度为0时，才会去触发此事件
     this.reading = false;// 是否正在读取，默认否
 
 
     this.open();// 打开文件
 
     this.on('newListener', (eventName) => {
-      if (eventName == 'readable') {
+      if (eventName == 'readable') {// 看是否监听了readble事件
         this.read();// 传参代表读取几个，不传代表把缓存区的全部读取。
       }
     });
@@ -49,6 +49,7 @@ class ReadStream extends EventEmitter {
           buffer[index++] = buf[i];
           if (index === n) { // 拷贝够了就不需要在拷贝了
             flag = false;
+            this.length -= n; // 维护缓存长度
             let bufferArr = buf.slice(i + 1);// 取出剩余的部分
             // 如果有剩余的部分，在放入缓存中
             if (bufferArr.length > 0) {
@@ -68,9 +69,9 @@ class ReadStream extends EventEmitter {
 
     // 当缓存区小于highWaterMark，就回再去读取并放进缓存区
     if (this.length < this.highWaterMark) {
-      if (!this.reading) {
+      if (!this.reading) {// 非正在读取时才能读取
         this._read();// 异步读取
-        this.reading = false;
+        this.reading = true;
       }
     }
     return buffer;
@@ -85,10 +86,11 @@ class ReadStream extends EventEmitter {
 
     let buffer = Buffer.alloc(this.highWaterMark);
     fs.read(this.fd, buffer, 0, buffer.length, this.pos, (err, bytesRead) => {//bytesRead读了多少个
+      this.reading = false;// 读取完成后就先不在继续读取
       if (bytesRead > 0) {
         this.buffers.push(buffer.slice(0, bytesRead))// slice 截取，实例解释： buffer 的长度是3个，但是bytesRead长度是2个，如果不截取，那么buffer里有有一个是空的，所以截取之后在仿佛buffers缓存中。
-        this.pos += bytesRead;
-        this.length += bytesRead;
+        this.pos += bytesRead;//维护读取到的位置
+        this.length += bytesRead;//维护缓存的长度
         // 是否需要触发readable事件
         if (this.emittedReadable) {
           this.emit('readable');

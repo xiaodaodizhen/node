@@ -4,7 +4,8 @@ let { Transform } = require('stream');
 // 他的参数和可写流一样
 let transform1 = Transform({
   transform(chunk, encoding, callback) {
-    this.push(chunk.toString().toUpperCase);//将输入的内容放到可读流中
+    console.log(chunk);
+    this.push(chunk.toString().toUpperCase());//将输入的内容放到可读流中
     callback();
   }
 });
@@ -21,5 +22,4 @@ let transform2 = Transform({
 process.stdin.pipe(transform1).pipe(transform2);
 
 
-
-//-------------------------本代码运行出错，布吉岛为啥，布吉岛为啥，布吉岛为啥！！
+//  run code  然后在cmd中 node transform.js   然后输入文字，

@@ -6,7 +6,7 @@
 let net = require('net');
 let clients = {};
 // 改名字
-function rename(key, data) {
+function rename(key, data) {  
     clients[key].nickname = data;
 }
 // 展示用户列表

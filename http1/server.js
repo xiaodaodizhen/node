@@ -13,7 +13,7 @@ let server = http.createServer((req, res) => {
     req.on('end', () => {
         let con = Buffer.concat(buffers).toString();
         if (contentType === 'application/json') { // 数据格式是json
-            console.log(JSON.parse(con), 1);
+            console.log(JSON.parse(con), 1);   
         } else if (contentType === "application/x-www-form-urlencoded") { // 数据格式表单式
             let queryStr = require('querystring');
             console.log(queryStr.parse(con), 2);
