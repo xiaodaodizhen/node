@@ -15,7 +15,7 @@ app.use((ctx, next) => {
     console.log(ctx.query, ctx.request.query); // query
     console.log(ctx.path, ctx.request.path); // pathname
     ctx.body = 'helddlo';
-
+    ctx.body = 'helddlosdfsfsd';// 可以调用多次，只是以最后一次为准
 });
 
 

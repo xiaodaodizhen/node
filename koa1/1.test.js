@@ -8,5 +8,8 @@ app.listen(3000);
 // });
 
 app.use((ctx) => {
-    console.log(ctx.request.query);
+    // console.log(ctx.query);
+    // console.log(ctx.request.query);
+    ctx.response.body = "1";
+    console.log(ctx.response.body);
 });
