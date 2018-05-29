@@ -1,0 +1,16 @@
+{
+  "name": "webpack1",
+  "version": "1.0.0",
+  "description": "- 标识项目依赖 --save 上线开发都需要\r -  --save-dev    ||   -D  开发依赖，只有开发用",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.10.1",
+    "webpack-cli": "^2.1.4"
+  }
+}
