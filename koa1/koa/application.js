@@ -2,9 +2,13 @@ let http = require('http');
 let context = require('./context');
 let request = require('./request');
 let response = require('./response');
-class Koa {
+let stream = require('stream');
+let EventEmitter = require('events');
+class Koa extends EventEmitter { // 继承事件类，是为了捕获错误后，发送错误信息
     constructor() {
+        super();
         this.callbackFn;
+        this.middlewares = [];
         this.context = context;
         this.response = response;
         this.request = request;
@@ -22,21 +26,52 @@ class Koa {
         //                                                     return url.parse(this.req.url, true).query;
         //                                                   } 这个方法，this指的是ctx.request,他没有req属性，所以采用ctx.req = ctx.request.req = req;给他赋上这个属性。
         //
-        console.log(this.response);
         ctx.response = Object.create(this.response);
         ctx.req = ctx.request.req = req;
         ctx.res = ctx.response.res = res;
         return ctx;
+    }
+    // koa 代码实现 app.use 中的next 的主要代码
+    compose(ctx, middlewares) {
+        function dispatch(index) {
+            let middleware = middlewares[index];
+            if (middlewares.length == index) return Promise.resolve();
+            return Promise.resolve(middleware(ctx, () => dispatch(index + 1)));// 这里回调函数 () => dispatch(index + 1))实质上是 app.use(async (ctx,next)=>{})的next
+        }
+        return dispatch(0);
     }
 
     // 定义回调函数
     handleRequest() {
         return (req, res) => {
             // 创建上下文对象，createContext方法库里自带
+            res.statusCode = 404;
             let ctx = this.createContext(req, res);
-            Promise.resolve(this.callbackFn(ctx)).then(function () {
-                res.end(ctx.body);// 当函数执行结束后并向页面赋值
-            });;
+
+            // 组合后的中间件，而且是一个promise
+            let composeMiddleWare = this.compose(ctx, this.middlewares);
+
+            composeMiddleWare.then(function () {
+                let body = ctx.body;
+                // body 是流的情况
+                if (body instanceof stream) {
+                    return body.pipe(res); // 通过管道 将流内容输出到页面上
+                }
+                // body是对象的情况
+                if (typeof body === "object") {
+                    return res.end(JSON.stringify(body)); // 将对象转换为字符串，输出到页面上
+                }
+
+                // 没有赋值的情况
+                if (body == undefined) {
+                    return res.end('not found');// 当函数执行结束后并向页面赋值
+                }
+                // body是普通数据类型的情况
+                res.end(body);
+            }).catch((err) => {// 捕获错误，然后发送事件，
+                this.emit('error', err);
+                res.end();
+            });
         }
     }
 
@@ -45,7 +80,8 @@ class Koa {
         server.listen(...arguments);// 这里不只是传端口，还有其他参数，比如callbalk
     }
     use(fn) {
-        this.callbackFn = fn;
+        // this.callbackFn = fn;
+        this.middlewares.push(fn);
     }
 }
 
