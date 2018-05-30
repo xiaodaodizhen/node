@@ -1,4 +1,4 @@
-// 获取范围请求
+// 获取范围请求-----断点续传-----服务端
 let http = require('http');
 let fs = require('fs');
 let path = require('path');

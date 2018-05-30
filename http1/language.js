@@ -35,11 +35,12 @@ server.on('request', (req, res) => {
     for (let i = 0; i < arr.length; i++) {
       let name = arr[i].name;
       if (pack[name]) {
+        res.setHeader('Content-Language', pack[name].content);
         res.end(pack[name].content);
       }
       break;// 这里return会怎样
     }
-
+    res.setHeader('Content-Language', pack[lan].content);
     res.end(pack[lan].content);
   }
 }).listen(8080);

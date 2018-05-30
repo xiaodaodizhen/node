@@ -1,4 +1,4 @@
-// 图片防盗链
+// 图片防盗链-------------根据当前请求头的referer 来判断。
 
 let fs = require('fs');
 let path = require('path');
@@ -23,8 +23,12 @@ let server = http.createServer((req, res) => {
     if (!err) {
       if (refer) { // 图片在其他站点中被使用了
         let referHostName = getHostName(refer);
-        let host = req.headers['host'].split(':')[0]; // locahost:8080  区的是localhost
+        let host = req.headers['host'].split(':')[0]; // locahost:8080  取的是localhost，代表的是当前文件的额主机名
         if (referHostName != host) {
+ 
+          // 白名单里的可以，补充代码---------------------------------------------------------
+
+
           // 防盗链
           fs.createReadStream(path.join(__dirname, 'public', './2.jpg')).pipe(res);
         } else {
