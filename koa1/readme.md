@@ -8,3 +8,6 @@
 ## 5.static.js : koa-static 库使用
 
 ## npm install koa-bodyparser(接受请求数据)            npm install koa-better-body(接受请求数据，实现文件上传)   npm install koa-static
+
+
+## cookie 功能，koa自带，使用方法自己补充？？？？？？？？？？？？

@@ -33,7 +33,7 @@ let path = require('path');
  * 
  * process.stdin.write() :标准输入 --0
  * process.stdout.write() :标准输出--1
- * process.stderr.write() :错误输出--2
+ * process.stderr.error() :错误输出--2
  * 
  */
 let buffer = Buffer.alloc(3);

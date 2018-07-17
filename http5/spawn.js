@@ -10,18 +10,18 @@
 // 如何创建一个子进程，复杂在与进程之间的通信
 // node 不合适，cpu密集
 
-// 创建子进程的方式:spawn 生成   fork 叉子  exex执行 execFile执行文件，后面三个都是基于spawn 封装的。
+// 创建子进程的方式:spawn 生成（产卵）   fork 叉子  exex执行 execFile执行文件，后面三个都是基于spawn 封装的。
 
 let { spawn } = require('child_process');
 let path = require('path');
 
 
 // 创建一个子进程
-let child = spawn('node', ['a.js', 'b', 'c'], { //node参数是当前执行的环境，a.js 是当前执行的文件 'b' 'c'是文件'a.js'的参数
+let child = spawn('node', ['a.js', 'b', 'c'], { //node参数是当前执行的环境命令，a.js 是当前执行的文件 'b' 'c'是文件'a.js'的参数
     // cwd 是process.cwd()  获取进程里的工作目录
     cwd: path.join(__dirname, 'process'),
-    stdio: [process.stdin, process.stdout]
-    // stdio: [0, 1]  0 1 代表的是文件描述符，如果不需要可以写ignore
+    stdio: [process.stdin, process.stdout]//继承父进程的参数
+    // stdio: [0, 1]  0 1 代表的是文件描述符，如果不需要可以写ignore（代表忽略子进程的结果），继承父进程的参数
     // stdio:'inherit' // 继承父进程的参数
 
 
